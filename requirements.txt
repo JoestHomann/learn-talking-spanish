@@ -1,0 +1,4 @@
+faster-whisper==1.2.1
+# Faster Whisper still passes the metadata_errors argument removed in newer PyAV.
+av==16.1.0
+piper-tts==1.4.2

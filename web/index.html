@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Spanische Gespräche auf B1-Niveau mit persönlichem Lernbericht.">
+  <title>B1 Teacher · Spanisch sprechen</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="identity">
+        <span class="brand-mark" aria-hidden="true">ñ</span>
+        <span>B1 Teacher</span>
+      </div>
+      <div class="account">
+        <span id="connection" class="connection">Lädt …</span>
+        <button class="button subtle" id="account" type="button" disabled>Weiter mit ChatGPT</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="heading">
+      <h1>Spanisch sprechen<span>.</span></h1>
+      <p>Übe mit Lucía auf B1-Niveau und nimm ein Lernziel mit ins nächste Gespräch.</p>
+    </div>
+    <div class="workspace" id="workspace">
+      <aside class="scenarios">
+        <h2>Szenarien</h2>
+        <button class="scenario active" data-scenario="alltag" type="button" aria-pressed="true">
+          <span class="scenario-icon everyday" aria-hidden="true">☀</span>
+          <span><strong>Alltag</strong><small>Über deinen Tag reden</small></span>
+        </button>
+        <button class="scenario" data-scenario="verhandlung" type="button" aria-pressed="false">
+          <span class="scenario-icon negotiate" aria-hidden="true">↔</span>
+          <span><strong>Verhandlung</strong><small>Eine Lösung finden</small></span>
+        </button>
+        <div id="focus" class="focus" hidden>
+          <h3>Dein Übungsziel</h3>
+          <p id="goal"></p>
+        </div>
+      </aside>
+
+      <section class="conversation" aria-labelledby="scenario-title">
+        <div class="conversation-head">
+          <div>
+            <h2 id="scenario-title">Alltag</h2>
+            <p id="scenario-description">Erzähl Lucía von deinem Tag und frag sie nach ihrem.</p>
+          </div>
+          <button class="button outline" id="finish" type="button" disabled>Gespräch beenden</button>
+        </div>
+        <ol id="messages" class="messages" aria-label="Gespräch" aria-live="polite"></ol>
+        <div class="composer">
+          <div class="composer-row">
+            <button id="record" class="record" type="button" aria-label="Aufnahme starten" title="Aufnahme starten" disabled>
+              <span class="mic" aria-hidden="true"></span>
+            </button>
+            <label class="sr-only" for="draft">Dein Beitrag auf Spanisch</label>
+            <textarea id="draft" rows="2" maxlength="1400" placeholder="Sprich oder schreib auf Spanisch …" lang="es" disabled></textarea>
+            <button class="button primary" id="send" type="button" disabled>Senden</button>
+          </div>
+          <p id="composer-status" class="hint" role="status">Verbinde dein ChatGPT-Konto, um zu starten.</p>
+          <button class="button outline" type="button" id="restart" hidden>Neues Gespräch</button>
+        </div>
+      </section>
+
+      <aside class="journal" aria-labelledby="report-title">
+        <div class="journal-heading">
+          <span class="scenario-icon notebook" aria-hidden="true">≡</span>
+          <h2 id="report-title">Lernbericht</h2>
+        </div>
+        <p id="report-empty">Nach dem Gespräch findest du hier deine Stärken, Korrekturen und das nächste Übungsziel.</p>
+        <label for="history" id="history-label" hidden>Gespräch auswählen</label>
+        <select id="history" hidden></select>
+        <div id="report" aria-live="polite" hidden></div>
+      </aside>
+    </div>
+    <footer class="footer">
+      <span>Audio bleibt auf diesem Rechner.</span>
+      <a href="https://chatgpt.com/settings/usage" target="_blank" rel="noopener">ChatGPT-Nutzung</a>
+    </footer>
+  </main>
+</body>
+</html>
