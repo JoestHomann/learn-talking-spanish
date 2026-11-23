@@ -18,7 +18,7 @@ h1, h2, h3, p { margin: 0; }
 button, textarea, select { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: default; opacity: .5; }
-button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visible {
+button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible {
   outline: 3px solid #ae5a35;
   outline-offset: 3px;
 }
@@ -66,6 +66,27 @@ button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visi
 .scenario strong, .scenario small { display: block; }
 .scenario strong { font-size: 15px; }
 .scenario small { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.exam-picker { margin-top: 20px; min-width: 0; }
+.exam-picker label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+.exam-picker select { width: 100%; min-height: 42px; padding: 7px; border: 1px solid var(--border); border-radius: 9px; background: #fff; color: var(--ink); font-size: 13px; }
+.exam-picker select.active { background: var(--soft-green); border-color: #b9c9b5; }
+.exam-picker select + label { margin-top: 12px; }
+.reading-material { margin: 14px 22px; padding: 12px 14px; background: #faf8f0; border: 1px solid var(--border); border-radius: 10px; }
+.reading-material summary { cursor: pointer; font-size: 14px; font-weight: 650; }
+.reading-material h3 { margin-top: 15px; font-size: 16px; line-height: 1.5; }
+.reading-material p, .reading-material li { font-size: 14px; line-height: 1.65; }
+.reading-material p { margin-top: 12px; }
+.reading-material h4 { margin-bottom: 6px; }
+.reading-material ol { padding-left: 24px; }
+.reading-progress { margin: 12px 22px; color: var(--green); font-size: 13px; }
+.evaluation-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.evaluation-table th, .evaluation-table td { padding: 8px 4px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.evaluation-table th { font-weight: 650; }
+.evaluation-table td:nth-child(2) { white-space: nowrap; }
+.evaluation-table tbody th, .evaluation-table tbody td { border-bottom: 0; padding-bottom: 3px; }
+.evaluation-table .evaluation-detail td { padding-top: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.evaluation-table p { font-size: 12px; }
+.evaluation-table q { color: var(--muted); }
 .scenario-icon {
   display: grid; place-items: center; flex: 0 0 auto;
   width: 34px; height: 34px; border-radius: 10px;
@@ -83,6 +104,9 @@ button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visi
 .conversation-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; padding: 22px 22px 17px; border-bottom: 1px solid #edf0e9; }
 .conversation-head h2 { font: 500 30px/1.1 Georgia, serif; letter-spacing: -.035em; }
 .conversation-head p { color: var(--muted); font-size: 13px; margin-top: 7px; }
+.exam-task { margin: 13px 22px 0; padding: 12px 14px; border-radius: 10px; border: 1px solid #e9e4d6; background: #faf8f0; }
+.exam-task h3 { font-size: 14px; }
+.exam-task ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .messages { height: clamp(256px, 41vh, 480px); overflow: auto; display: flex; flex-direction: column; gap: 18px; margin: 0; padding: 21px; list-style: none; scroll-behavior: smooth; }
 .message { display: flex; align-self: flex-start; max-width: 92%; flex-direction: column; gap: 5px; }
 .message.user { align-self: flex-end; }
@@ -94,10 +118,19 @@ button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visi
 .listen:hover { background: #f0f5eb; }
 
 .composer { padding: 14px 17px; border-top: 1px solid #edf0e9; }
+.voice-preview { margin-bottom: 12px; padding: 10px 13px; background: var(--soft-green); border-radius: 10px; }
+.voice-preview-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12px; font-weight: 650; }
+.voice-preview-text { display: block; width: 100%; max-height: 10em; overflow: auto; background: #fff; font-size: 14px; line-height: 1.5; }
+.voice-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 16px; margin-bottom: 12px; }
+.think-time { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); }
+.think-time select { min-height: 34px; border: 1px solid var(--border); border-radius: 7px; padding: 4px 7px; color: var(--ink); background: #fff; }
+.volume-control { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 13px; }
+.volume-control input { width: 80px; min-height: 28px; accent-color: var(--green); margin: 0; }
+.volume-control output { min-width: 3.35em; text-align: right; font-variant-numeric: tabular-nums; }
 .composer-row { display: flex; align-items: center; gap: 10px; }
 textarea { flex: 1; width: 0; min-width: 0; resize: vertical; padding: 10px 11px; color: var(--ink); border: 1px solid var(--border); border-radius: 10px; min-height: 44px; max-height: 180px; }
 textarea::placeholder { color: #617168; }
-.record { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; background: var(--green); border: 0; border-radius: 12px; color: #fff; }
+.record { display: inline-flex; align-items: center; gap: 12px; min-height: 42px; padding-inline: 15px; background: var(--green); border-radius: 10px; color: #fff; }
 .record.recording { background: #a43f30; }
 .record.recording .mic { width: 12px; height: 12px; outline: 0; border-radius: 2px; background: currentColor; }
 .mic { position: relative; width: 8px; height: 14px; border: 2px solid currentColor; border-radius: 8px; transform: translateY(-2px); }
@@ -134,12 +167,14 @@ textarea::placeholder { color: #617168; }
   .workspace { grid-template-columns: minmax(0, 1fr); gap: 13px; }
   .journal { grid-column: auto; }
   .scenarios { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .scenarios h2, .focus { grid-column: 1 / -1; }
+  .scenarios h2, .exam-picker, .focus { grid-column: 1 / -1; }
   .scenarios h2 { margin-bottom: 0; }
   .scenario + .scenario { margin-top: 0; }
+  .exam-picker { margin-top: 5px; }
   .focus { margin-top: 4px; padding-top: 7px; }
   .connection { display: none; }
   .conversation-head, .messages { padding-inline: 15px; }
+  .exam-task { margin-inline: 15px; }
   .composer { padding-inline: 11px; }
   .composer-row { gap: 6px; }
   .heading p { font-size: 14px; }

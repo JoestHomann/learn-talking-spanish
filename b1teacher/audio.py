@@ -53,7 +53,7 @@ class LocalAudio:
             except (ValueError, OSError, EOFError):
                 raise AudioError("Diese Aufnahme konnte nicht gelesen werden.") from None
             if not len(audio) or len(audio) > 16000 * MAX_SECONDS:
-                raise AudioError("Bitte sprich bis zu 45 Sekunden pro Beitrag.")
+                raise AudioError("Der Audioabschnitt ist leer oder zu lang.")
             segments, _ = self.recognizer.transcribe(
                 audio, language="es", beam_size=3, vad_filter=True,
                 condition_on_previous_text=False

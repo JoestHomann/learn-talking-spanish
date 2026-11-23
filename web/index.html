@@ -38,6 +38,26 @@
           <span class="scenario-icon negotiate" aria-hidden="true">↔</span>
           <span><strong>Verhandlung</strong><small>Eine Lösung finden</small></span>
         </button>
+        <div class="exam-picker">
+          <label for="exam-topic">Prüfungsthemen B1</label>
+          <select id="exam-topic" disabled>
+            <option value="" disabled selected>Thema wählen</option>
+          </select>
+        </div>
+        <div class="exam-picker">
+          <label for="reading-topic">Texte & Gesprächsfragen</label>
+          <select id="reading-topic" disabled>
+            <option value="" disabled selected>Text wählen</option>
+            <option value="3">Texto 3 · Redes sociales</option>
+            <option value="4">Texto 4 · Universidad e IA</option>
+          </select>
+          <label for="reading-mode">Gesprächsmodus</label>
+          <select id="reading-mode" disabled aria-describedby="reading-mode-hint">
+            <option value="basico" selected>Basisteil</option>
+            <option value="ampliado">Erweiterter Teil</option>
+          </select>
+          <p class="hint" id="reading-mode-hint">Basisteil: nur die 28 Originalfragen. Erweiterter Teil: anschließend zusätzliche Fragen.</p>
+        </div>
         <div id="focus" class="focus" hidden>
           <h3>Dein Übungsziel</h3>
           <p id="goal"></p>
@@ -52,14 +72,49 @@
           </div>
           <button class="button outline" id="finish" type="button" disabled>Gespräch beenden</button>
         </div>
+        <div class="exam-task" id="exam-task" hidden>
+          <h3 id="exam-format"></h3>
+          <ul id="exam-points" lang="es"></ul>
+        </div>
+        <details id="reading-material" class="reading-material" hidden>
+          <summary>Lesetext und Originalfragen anzeigen</summary>
+          <h3 id="reading-title" lang="es"></h3>
+          <div id="reading-body" lang="es"></div>
+          <div id="reading-questions" lang="es"></div>
+        </details>
+        <p id="reading-progress" class="reading-progress" role="status" hidden></p>
         <ol id="messages" class="messages" aria-label="Gespräch" aria-live="polite"></ol>
         <div class="composer">
-          <div class="composer-row">
-            <button id="record" class="record" type="button" aria-label="Aufnahme starten" title="Aufnahme starten" disabled>
+          <div class="voice-controls">
+            <button id="record" class="button record" type="button" aria-pressed="false" disabled>
               <span class="mic" aria-hidden="true"></span>
+              <span id="voice-label">Sprachmodus starten</span>
             </button>
+            <button id="send-now" class="button outline" type="button" hidden disabled>Direkt senden</button>
+            <label class="think-time" for="think-time">
+              Denkpause
+              <select id="think-time" disabled>
+                <option value="2">2 Sek.</option>
+                <option value="4" selected>4 Sek.</option>
+                <option value="6">6 Sek.</option>
+                <option value="8">8 Sek.</option>
+                <option value="12">12 Sek.</option>
+              </select>
+            </label>
+            <div class="volume-control">
+              <label for="volume">Lautstärke</label>
+              <input id="volume" type="range" min="0" max="100" value="100" aria-label="Lautstärke von Lucía" disabled>
+              <output id="volume-value" for="volume" aria-hidden="true">100 %</output>
+            </div>
+          </div>
+          <div class="voice-preview" id="voice-preview" hidden>
+            <label class="voice-preview-label" for="voice-preview-text">Live-Transkript</label>
+            <textarea class="voice-preview-text" id="voice-preview-text" rows="3" maxlength="16000"
+              placeholder="Erkenne deinen Beitrag …" lang="es" disabled></textarea>
+          </div>
+          <div class="composer-row">
             <label class="sr-only" for="draft">Dein Beitrag auf Spanisch</label>
-            <textarea id="draft" rows="2" maxlength="1400" placeholder="Sprich oder schreib auf Spanisch …" lang="es" disabled></textarea>
+            <textarea id="draft" rows="2" maxlength="16000" placeholder="Schreib auf Spanisch …" lang="es" disabled></textarea>
             <button class="button primary" id="send" type="button" disabled>Senden</button>
           </div>
           <p id="composer-status" class="hint" role="status">Verbinde dein ChatGPT-Konto, um zu starten.</p>

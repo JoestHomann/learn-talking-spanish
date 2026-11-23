@@ -10,6 +10,8 @@ from uuid import uuid4
 
 from b1teacher import chatgpt, teacher
 from b1teacher.__main__ import LocalServer
+from b1teacher.scenarios import public_scenarios
+from b1teacher.evaluation import RUBRIC, validate_evaluation
 
 
 def model_response(text):
@@ -18,7 +20,43 @@ def model_response(text):
     ]}]}).encode(), "application/json"
 
 
+def evaluation(evidence):
+    return {key: {"score": 3, "reason": "Du reagierst verständlich und passend.", "evidence": evidence}
+            for key in RUBRIC}
+
+
 class TeacherTest(unittest.TestCase):
+    def test_exam_topics_use_same_prompts_in_dialog_and_report(self):
+        topics = {key: topic for key, topic in public_scenarios().items() if "area" in topic}
+        self.assertEqual(len(topics), 10)
+        for key, topic in topics.items():
+            with self.subTest(key=key):
+                self.assertEqual(len(topic["points"]), 3)
+                self.assertNotIn("instructions", topic)
+                payload = {"scenario": key, "messages": [
+                    {"role": "assistant", "content": topic["opening"]},
+                    {"role": "user", "content": "Me gustaría explicar mi experiencia."},
+                ]}
+                messages = teacher.conversation(payload)
+                result = {
+                    "summary": "Ihr habt eine Prüfungsaufgabe geübt.",
+                    "strength": "Du hast die Aufgabe aufgegriffen.",
+                    "next_goal": "Ergänze ein konkretes Beispiel.",
+                    "practice": "Erzähle von einer weiteren Erfahrung.",
+                    "corrections": [],
+                    "evaluation": evaluation(payload["messages"][1]["content"]),
+                }
+                with patch.object(teacher, "request_text", side_effect=[
+                    "¿Puedes darme un ejemplo?", json.dumps(result)
+                ]) as request:
+                    teacher.reply(payload, messages, "test-luna", "")
+                    expected = {**result, "evaluation": validate_evaluation(
+                        result["evaluation"], [payload["messages"][1]["content"]], False)}
+                    self.assertEqual(teacher.report(payload, messages, "test-luna"), expected)
+                    for call in request.call_args_list:
+                        self.assertTrue(all(point in call.args[1] for point in topic["points"]))
+                    self.assertIn(topic["format"], request.call_args.args[1])
+
     def test_dialog_report_and_next_goal_via_local_server(self):
         with TemporaryDirectory() as folder, LocalServer(0) as server:
             journal = Path(folder) / "journal.json"
@@ -40,6 +78,7 @@ class TeacherTest(unittest.TestCase):
                 "strength": "Du hast einen konkreten Vorschlag gemacht.",
                 "next_goal": "Vorschläge mit te propongo que bilden.",
                 "practice": "Schlage eine Aktivität für Sonntag vor.",
+                "evaluation": evaluation(learner),
                 "corrections": [
                     {"original": learner, "corrected": "Te propongo que salgamos a las once.",
                      "explanation": "Bei diesem Vorschlag folgt der Subjuntivo."},

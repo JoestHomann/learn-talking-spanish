@@ -8,10 +8,13 @@ import webbrowser
 from . import chatgpt, teacher
 from .audio import AudioError, LocalAudio, MAX_AUDIO, models_ready
 from .paths import PROJECT
+from .scenarios import public_scenarios
 
 ASSETS = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/app.js": ("app.js", "text/javascript; charset=utf-8"),
+    "/voice.mjs": ("voice.mjs", "text/javascript; charset=utf-8"),
+    "/microphone.js": ("microphone.js", "text/javascript; charset=utf-8"),
     "/styles.css": ("styles.css", "text/css; charset=utf-8"),
 }
 AUDIO_TYPES = {"audio/webm", "audio/mp4", "audio/ogg", "audio/wav"}
@@ -83,7 +86,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.headers.get_content_type() != "application/json":
             raise teacher.InputError("Die Anfrage muss JSON enthalten.")
         try:
-            payload = json.loads(self._read(512_000))
+            payload = json.loads(self._read(3 * 1024 * 1024))
         except (UnicodeError, json.JSONDecodeError):
             raise teacher.InputError("Ungültige Anfrage.") from None
         if not isinstance(payload, dict):
@@ -96,10 +99,12 @@ class Handler(BaseHTTPRequestHandler):
             item["connected"] and item["client_id"] == account["active"]
             for item in account["accounts"]
         )
-        return {"connected": connected, "audioReady": models_ready(), "scenarios": {
-            key: {field: item[field] for field in ("label", "opening")}
-            for key, item in teacher.SCENARIOS.items()
-        }, "reports": teacher.read_journal()}
+        return {
+            "connected": connected,
+            "audioReady": models_ready(),
+            "scenarios": public_scenarios(),
+            "reports": teacher.read_journal(),
+        }
 
     def do_GET(self):
         if self.headers.get("Host") != self.server.host_header:
@@ -137,7 +142,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/turn":
             journal = teacher.read_journal()
             goal = journal[0]["next_goal"] if journal else ""
-            return {"reply": teacher.reply(payload, messages, self.server.plan_model(), goal)}
+            selected = teacher.scenario(payload["scenario"])
+            # Original questions are deterministic and need no model selection/network call.
+            fixed = teacher.fixed_reply(selected, messages) if "reading" in selected else None
+            answer = fixed or teacher.reply(payload, messages, self.server.plan_model(), goal)
+            return {"reply": answer, "complete": teacher.complete(selected, messages)}
         report_id = teacher.session_id(payload.get("id"))
         with self.server.report_lock:
             for entry in teacher.read_journal():
@@ -154,7 +163,7 @@ class Handler(BaseHTTPRequestHandler):
                 if self.headers.get_content_type() not in AUDIO_TYPES:
                     raise teacher.InputError("Das Aufnahmeformat wird nicht unterstützt.")
                 text = self.server.audio.transcribe(self._read(MAX_AUDIO))
-                return self._json(HTTPStatus.OK, {"text": text[:teacher.MAX_TEXT]})
+                return self._json(HTTPStatus.OK, {"text": text})
 
             payload = self._request_json()
             if self.path == "/api/sign-in":
